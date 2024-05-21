@@ -26,15 +26,16 @@ export class TribalService extends BaseController {
          {
             let resp:any = await this.getJokesRandom();
             let exits = data.some((x:any)=>x.id === resp.id)
-            if(!exits){
-                data.push({
-                    id: resp.id,
-                    udl: resp.url,
-                    value: resp.value
-                })
-            }else{
-                cont++; //si ya existe el registro se realiza de nuevo la petición
+            //si no existe vuelve hacer la petición
+            while(exits){
+                resp = await this.getJokesRandom();
+                exits = data.some((x:any)=>x.id === resp.id)
             }
+            data.push({
+                id: resp.id,
+                udl: resp.url,
+                value: resp.value
+            })
          });
         await Promise.all(workLoad); //se realizan todas las peticiones a la vez con promiseAll, mejora significativamente el rendimiento
 
